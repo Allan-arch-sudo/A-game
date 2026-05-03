@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>A Game — Home Workout Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b0d;--bg2:#111114;--bg3:#18181d;--card:#1a1a20;
+  --border:#252530;--border2:#32323f;
+  --text:#eeeef2;--muted:#7777a0;--dim:#44445a;
+  --red:#e83838;--orange:#ff5722;--blue:#4a9eff;--green:#2ecc71;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+
+nav{position:sticky;top:0;z-index:200;background:rgba(11,11,13,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px}.logo span{color:var(--red)}
+.nav-links{display:flex;gap:1.8rem}.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}.nav-links a:hover{color:var(--text)}
+
+.hero{padding:5rem 2rem 3rem;position:relative;overflow:hidden;min-height:85vh;display:flex;align-items:center}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 75% 50%,rgba(232,56,56,.05),transparent 65%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.013) 1px,transparent 1px);background-size:48px 48px}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:3rem;align-items:center;width:100%;position:relative;z-index:1}
+@media(max-width:820px){.hero-inner{grid-template-columns:1fr}}
+.eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:1.2rem;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--red)}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9vw,7rem);line-height:.9;letter-spacing:1px;margin-bottom:1.4rem}
+h1 em{color:var(--red);font-style:normal}
+.hero-desc{font-size:15px;color:var(--muted);line-height:1.75;max-width:420px;margin-bottom:2rem}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:#fff;font-size:13px;font-weight:500;padding:12px 26px;border-radius:6px;text-decoration:none;border:none;cursor:pointer;transition:all .2s}
+.cta:hover{background:#c22e2e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,56,56,.3)}
+.hero-stats{display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border)}
+.snum{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1}
+.slbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
+.hero-demo{background:var(--bg3);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative;height:280px;display:flex;align-items:center;justify-content:center}
+.hero-demo::before{content:'PUSH-UP — LIVE DEMO';position:absolute;top:12px;left:14px;font-size:9px;letter-spacing:2px;color:var(--dim)}
+.hero-badge{position:absolute;bottom:10px;right:10px;background:rgba(232,56,56,.15);border:1px solid rgba(232,56,56,.3);color:var(--red);font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:20px}
+
+.wrap{max-width:1100px;margin:0 auto;padding:3.5rem 2rem}
+.sec-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
+.sec-eyebrow::before{content:'';display:block;width:18px;height:1px;background:var(--red)}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:.3rem}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
+
+.app-grid{display:grid;grid-template-columns:210px 1fr;gap:1.5rem;align-items:start}
+@media(max-width:760px){.app-grid{grid-template-columns:1fr}}
+
+.model-col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.vtoggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px;gap:3px}
+.vbtn{font-size:11px;padding:5px 14px;border-radius:5px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.vbtn.on{background:var(--red);color:#fff}
+.hint{font-size:10px;color:var(--dim);text-align:center}
+.leg-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.leg-title{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:4px;border-radius:4px;cursor:pointer;transition:background .15s}
+.leg-item:hover{background:var(--bg3);color:var(--text)}
+.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;min-height:500px}
+.empty-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;height:500px;gap:14px}
+.panel-hdr{padding:1.2rem 1.4rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
+.mname{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:1px}
+.mtag{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(232,56,56,.1);color:var(--red);border:1px solid rgba(232,56,56,.2)}
+.panel-body{padding:1rem 1.4rem}
+.ex-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1rem}
+.etab{font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--muted);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.etab:hover{border-color:var(--red);color:var(--text)}
+.etab.on{background:var(--red);color:#fff;border-color:var(--red)}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:880px){.ex-grid{grid-template-columns:1fr}}
+
+.stage{background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.stage-top{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border)}
+.stage-name{font-size:11px;color:var(--muted);letter-spacing:.5px}
+.stage-rep{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--red);letter-spacing:1px}
+.stage-canvas{display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.stage-canvas svg{display:block;width:100%;height:auto}
+.stage-muscle{font-size:9px;color:var(--red);letter-spacing:1.5px;text-align:center;padding:4px;text-transform:uppercase}
+.stage-ctrl{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;border-top:1px solid var(--border)}
+.cbtn{background:var(--bg);border:1px solid var(--border2);color:var(--muted);font-size:11px;padding:4px 16px;border-radius:5px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+.cbtn.on{background:rgba(232,56,56,.1);border-color:var(--red);color:var(--red)}
+.fbars{display:flex;gap:4px;align-items:center}
+.fbar{width:16px;height:3px;border-radius:2px;background:var(--border2);transition:all .2s}
+.fbar.on{background:var(--red);width:22px}
+
+.info-panel{display:flex;flex-direction:column;gap:.8rem}
+.ilbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px}
+.ival{font-size:14px;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(74,158,255,.1);color:var(--blue);border:1px solid rgba(74,158,255,.2)}
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--muted);line-height:1.5}
+.stepn{min-width:18px;height:18px;background:var(--red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0;margin-top:1px}
+.tip-box{background:rgba(46,204,113,.06);border-left:2px solid var(--green);border-radius:0 6px 6px 0;padding:8px 12px}
+.tip-txt{font-size:12px;color:#7ecf9e;line-height:1.6}
+.tip-txt strong{color:var(--green)}
+.plan-btn{width:100%;font-size:12px;padding:9px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;margin-top:.4rem}
+.plan-btn:hover{border-color:var(--red);color:var(--red)}
+
+.plan-bg{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.plan-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.6rem;margin-top:1.5rem}
+@media(max-width:700px){.plan-grid{grid-template-columns:repeat(4,1fr)}}
+.day{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem}
+.day.off{opacity:.45}
+.day-n{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:1.5px;color:var(--dim);margin-bottom:3px}
+.day-f{font-size:12px;font-weight:500;margin-bottom:3px}
+.day-t{font-size:10px;color:var(--red)}
+.day-r{font-size:11px;color:var(--dim);font-style:italic}
+
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;margin-top:1.5rem}
+.tcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem}
+.tcard-icon{font-size:22px;margin-bottom:.6rem}
+.tcard h3{font-size:13px;font-weight:500;margin-bottom:.4rem}
+.tcard p{font-size:11px;color:var(--muted);line-height:1.65}
+
+footer{padding:2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.flogo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:var(--dim)}
+.flogo span{color:var(--red)}
+.ftxt{font-size:11px;color:var(--dim)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease forwards}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">A <span>GAME</span></div>
+  <div class="nav-links">
+    <a href="#trainer">Trainer</a>
+    <a href="#plan">Plan</a>
+    <a href="#tips">Tips</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Zero Equipment Training</div>
+      <h1>TRAIN YOUR<br/><em>BODY</em><br/>AT HOME</h1>
+      <p class="hero-desc">Click any muscle on the anatomy model. Watch real animated human figures demonstrate every exercise with correct form — no gym, no gear.</p>
+      <a href="#trainer" class="cta">Start Training ↓</a>
+      <div class="hero-stats">
+        <div><div class="snum">8</div><div class="slbl">Muscle groups</div></div>
+        <div><div class="snum">28</div><div class="slbl">Exercises</div></div>
+        <div><div class="snum">0</div><div class="slbl">Equipment</div></div>
+      </div>
+    </div>
+    <div class="hero-demo">
+      <svg id="heroSvg" viewBox="0 0 340 250" width="360" height="250" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="hero-badge">LIVE ANIMATION</div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" id="trainer">
+  <div class="sec-eyebrow">Interactive Trainer</div>
+  <div class="sec-title">Muscle Selector</div>
+  <p class="sec-sub">Tap any highlighted muscle — animated human figures show you exactly how to move</p>
+  <div class="app-grid">
+    <div class="model-col">
+      <div class="vtoggle">
+        <button class="vbtn on" onclick="setView('front',this)">Front</button>
+        <button class="vbtn" onclick="setView('back',this)">Back</button>
+      </div>
+      <svg id="bodySvg" width="195" height="430" viewBox="0 0 190 430" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer"></svg>
+      <div class="hint">↑ tap any highlighted muscle</div>
+      <div class="leg-box">
+        <div class="leg-title">Muscle groups</div>
+        <div id="legend"></div>
+      </div>
+    </div>
+    <div class="panel" id="panel">
+      <div class="empty-panel" id="emptyState">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#32323f" stroke-width="1.5"/><path d="M14 20l5 5 8-8" stroke="#44445a" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="font-size:14px;font-weight:500;color:#7777a0">Select a muscle group</div>
+        <div style="font-size:12px;color:#44445a">Tap any highlighted area on the model</div>
+      </div>
+      <div id="workoutContent" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<div class="plan-bg" id="plan">
+  <div class="wrap">
+    <div class="sec-eyebrow">Training Schedule</div>
+    <div class="sec-title">7-Day Home Program</div>
+    <p class="sec-sub">Balanced push/pull/legs split — no equipment, progressive overload built in</p>
+    <div class="plan-grid">
+      <div class="day"><div class="day-n">MON</div><div class="day-f">Push Day</div><div class="day-t">Chest · Shoulders · Triceps</div></div>
+      <div class="day"><div class="day-n">TUE</div><div class="day-f">Pull Day</div><div class="day-t">Back · Biceps</div></div>
+      <div class="day"><div class="day-n">WED</div><div class="day-f">Legs</div><div class="day-t">Quads · Glutes · Calves</div></div>
+      <div class="day off"><div class="day-n">THU</div><div class="day-f">Active Rest</div><div class="day-r">Walk · Stretch</div></div>
+      <div class="day"><div class="day-n">FRI</div><div class="day-f">Core & Glutes</div><div class="day-t">Abs · Glutes · Back</div></div>
+      <div class="day"><div class="day-n">SAT</div><div class="day-f">Full Body</div><div class="day-t">Compound only</div></div>
+      <div class="day off"><div class="day-n">SUN</div><div class="day-f">Rest</div><div class="day-r">Recovery = growth</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="tips">
+  <div class="sec-eyebrow">Training Science</div>
+  <div class="sec-title">Principles That Work</div>
+  <p class="sec-sub">Master these and you'll out-train most gym-goers</p>
+  <div class="tips-grid">
+    <div class="tcard"><div class="tcard-icon">📈</div><h3>Progressive Overload</h3><p>Add 1–2 reps every week or slow your tempo. Muscles only grow when challenged beyond what they're used to.</p></div>
+    <div class="tcard"><div class="tcard-icon">😴</div><h3>Sleep = Real Gains</h3><p>Muscle is built during sleep, not the workout. 7–9 hours. Skimping kills gains faster than skipping sessions.</p></div>
+    <div class="tcard"><div class="tcard-icon">🥩</div><h3>Protein First</h3><p>Target 1.6–2g per kg of bodyweight daily. Build every meal around a quality protein source.</p></div>
+    <div class="tcard"><div class="tcard-icon">🧠</div><h3>Mind-Muscle Focus</h3><p>Think about the muscle you're training. Studies show up to 35% more activation vs mindless movement.</p></div>
+    <div class="tcard"><div class="tcard-icon">💧</div><h3>Stay Hydrated</h3><p>Even 2% dehydration cuts strength output significantly. Drink before, during, and after every session.</p></div>
+    <div class="tcard"><div class="tcard-icon">📅</div><h3>Consistency Wins</h3><p>3 sessions per week every week beats 7-day bursts followed by burnout. Show up — relentlessly.</p></div>
+  </div>
+</div>
+
+<footer>
+  <div class="flogo">A <span>GAME</span></div>
+  <div class="ftxt">No gym. No equipment. All gains.</div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SINGLE COLOR PALETTE — defined once
+// ═══════════════════════════════════════════════════════════════
+var C = {
+  sk:  '#d4956a',  // skin
+  sk2: '#b87040',  // skin dark
+  sk3: '#8b5230',  // skin darkest
+  hr:  '#2a1a0e',  // hair
+  mu:  '#6a3535',  // muscle dark (anatomy model)
+  mu2: '#4a2525',  // muscle darker
+  red: '#e83838',  // active/highlight red
+  red2:'#c02828',
+  clo: '#1e3a5f',  // clothing blue
+  clo2:'#0f2035',
+  sho: '#111111',  // shoe
+  gnd: '#1e2028',  // ground line
+  wht: '#ffffff',
+  eye: '#1a0a05',
+  lps: '#8b5230'
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ANATOMY MODEL (side-view, realistic proportions)
+// ═══════════════════════════════════════════════════════════════
+
+function bodyBase() {
+  return [
+    // head
+    '<ellipse cx="95" cy="36" rx="22" ry="25" fill="'+C.sk+'"/>',
+    '<path d="M73,28 Q76,10 95,8 Q114,10 117,28" fill="'+C.hr+'"/>',
+    // neck
+    '<rect x="88" y="58" width="14" height="18" rx="5" fill="'+C.sk2+'"/>',
+    // face details
+    '<ellipse cx="85" cy="32" rx="3.5" ry="4" fill="'+C.sk2+'" opacity=".25"/>',
+    '<ellipse cx="105" cy="32" rx="3.5" ry="4" fill="'+C.sk2+'" opacity=".25"/>',
+    '<circle cx="85" cy="33" r="2.5" fill="'+C.eye+'"/>',
+    '<circle cx="105" cy="33" r="2.5" fill="'+C.eye+'"/>',
+    '<circle cx="85.8" cy="32.2" r="0.9" fill="'+C.wht+'"/>',
+    '<circle cx="105.8" cy="32.2" r="0.9" fill="'+C.wht+'"/>',
+    '<path d="M89,44 Q95,47.5 101,44" stroke="'+C.lps+'" stroke-width="1" fill="none"/>',
+    '<path d="M82,26 Q85,23.5 88,25.5" stroke="'+C.sk3+'" stroke-width=".8" fill="none"/>',
+    '<path d="M102,25.5 Q105,23.5 108,26" stroke="'+C.sk3+'" stroke-width=".8" fill="none"/>',
+    '<ellipse cx="89" cy="43" rx="3.5" ry="2.5" fill="'+C.sk+'" opacity=".6"/>',
+    '<ellipse cx="101" cy="43" rx="3.5" ry="2.5" fill="'+C.sk+'" opacity=".6"/>'
+  ].join('');
+}
+
+function torsoFront(active) {
+  var cA=active==='chest', shA=active==='shoulders', abA=active==='abs';
+  var cf=cA?C.red:C.mu, af=abA?C.red:'#5a3535', sf=shA?C.red:C.mu;
+  return [
+    // torso base
+    '<path d="M55,78 Q70,72 95,71 Q120,72 135,78 L137,162 Q120,170 95,172 Q70,170 53,162 Z" fill="'+C.sk+'"/>',
+    // pec definition line
+    '<line x1="95" y1="78" x2="95" y2="118" stroke="'+C.sk3+'" stroke-width=".8" opacity=".4"/>',
+    // chest muscle
+    '<path class="mg" data-id="chest" style="cursor:pointer" d="M57,78 Q70,72 95,71 Q120,72 133,78 L131,108 Q118,102 95,100 Q72,102 59,108 Z" fill="'+cf+'"/>',
+    '<ellipse class="mg" data-id="chest" style="cursor:pointer" cx="82" cy="93" rx="11" ry="10" fill="'+(cA?C.red2:C.mu2)+'" opacity=".9"/>',
+    '<ellipse class="mg" data-id="chest" style="cursor:pointer" cx="108" cy="93" rx="11" ry="10" fill="'+(cA?C.red2:C.mu2)+'" opacity=".9"/>',
+    // abs
+    '<path class="mg" data-id="abs" style="cursor:pointer" d="M59,108 Q72,102 95,100 Q118,102 131,108 L129,140 Q115,147 95,148 Q75,147 61,140 Z" fill="'+af+'" opacity=".85"/>',
+    '<path d="M75,112 Q86,116 95,115 Q104,116 115,112" stroke="'+C.sk3+'" stroke-width=".6" fill="none" opacity=".3"/>',
+    '<path d="M75,128 Q86,133 95,132 Q104,133 115,128" stroke="'+C.sk3+'" stroke-width=".6" fill="none" opacity=".3"/>',
+    // waist/shorts
+    '<path d="M53,162 Q72,172 95,174 Q118,172 137,162 L135,175 Q118,184 95,186 Q72,184 55,175 Z" fill="'+C.sk2+'"/>',
+    '<path d="M55,175 Q72,184 95,186 Q118,184 135,175 L132,210 Q116,217 95,218 Q74,217 58,210 Z" fill="'+C.clo+'"/>',
+    '<line x1="95" y1="186" x2="95" y2="218" stroke="'+C.clo2+'" stroke-width="1.5" opacity=".5"/>',
+    // shoulders
+    '<ellipse class="mg" data-id="shoulders" style="cursor:pointer" cx="46" cy="88" rx="14" ry="9" fill="'+sf+'"/>',
+    '<ellipse class="mg" data-id="shoulders" style="cursor:pointer" cx="144" cy="88" rx="14" ry="9" fill="'+sf+'"/>',
+    '<path class="mg" data-id="shoulders" style="cursor:pointer" d="M59,78 Q54,84 46,87 Q39,89 36,98" stroke="'+sf+'" stroke-width="5" fill="none" stroke-linecap="round"/>',
+    '<path class="mg" data-id="shoulders" style="cursor:pointer" d="M131,78 Q136,84 144,87 Q151,89 154,98" stroke="'+sf+'" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  ].join('');
+}
+
+function torsoBack(active) {
+  var bA=active==='back', shA=active==='shoulders', gA=active==='glutes';
+  var bf=bA?C.red:C.mu, gf=gA?C.red:'#5a3535', sf=shA?C.red:C.mu;
+  return [
+    '<path d="M55,78 Q70,72 95,71 Q120,72 135,78 L137,162 Q120,170 95,172 Q70,170 53,162 Z" fill="'+C.sk+'"/>',
+    // trapezius / upper back
+    '<path class="mg" data-id="back" style="cursor:pointer" d="M58,80 Q72,74 95,73 Q118,74 132,80 L130,128 Q112,120 95,119 Q78,120 60,128 Z" fill="'+bf+'"/>',
+    '<path d="M68,88 Q80,84 95,83 Q110,84 122,88" stroke="'+C.mu2+'" stroke-width="2.5" fill="none" opacity=".4"/>',
+    '<path d="M63,108 Q79,102 95,101 Q111,102 127,108" stroke="'+C.mu2+'" stroke-width="2" fill="none" opacity=".3"/>',
+    '<line x1="95" y1="119" x2="95" y2="172" stroke="'+C.sk3+'" stroke-width="1.2" opacity=".35"/>',
+    // lower back / glutes
+    '<path class="mg" data-id="glutes" style="cursor:pointer" d="M60,128 Q78,120 95,119 Q112,120 130,128 L133,162 Q116,170 95,172 Q74,170 57,162 Z" fill="'+gf+'" opacity=".9"/>',
+    // shorts
+    '<path d="M57,162 Q74,172 95,174 Q116,172 133,162 L130,210 Q115,216 95,217 Q75,216 60,210 Z" fill="'+C.clo+'"/>',
+    '<line x1="95" y1="174" x2="95" y2="217" stroke="'+C.clo2+'" stroke-width="1.5" opacity=".5"/>',
+    // shoulders
+    '<ellipse class="mg" data-id="shoulders" style="cursor:pointer" cx="46" cy="88" rx="14" ry="9" fill="'+sf+'"/>',
+    '<ellipse class="mg" data-id="shoulders" style="cursor:pointer" cx="144" cy="88" rx="14" ry="9" fill="'+sf+'"/>',
+    '<path class="mg" data-id="shoulders" style="cursor:pointer" d="M59,78 Q54,84 46,87 Q39,89 36,98" stroke="'+sf+'" stroke-width="5" fill="none" stroke-linecap="round"/>',
+    '<path class="mg" data-id="shoulders" style="cursor:pointer" d="M131,78 Q136,84 144,87 Q151,89 154,98" stroke="'+sf+'" stroke-width="5" fill="none" stroke-linecap="round"/>'
+  ].join('');
+}
+
+function armsFront(active) {
+  var aA=active==='arms';
+  var af=aA?C.red:C.sk, af2=aA?C.red2:C.sk2;
+  return [
+    // upper arms
+    '<path class="mg" data-id="arms" style="cursor:pointer" d="M36,98 Q27,112 24,133 Q22,152 26,168 Q30,178 37,180" stroke="'+af+'" stroke-width="13" fill="none" stroke-linecap="round"/>',
+    '<path class="mg" data-id="arms" style="cursor:pointer" d="M154,98 Q163,112 166,133 Q168,152 164,168 Q160,178 153,180" stroke="'+af+'" stroke-width="13" fill="none" stroke-linecap="round"/>',
+    // bicep peak
+    '<path d="M36,98 Q27,112 24,133" stroke="'+af2+'" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>',
+    '<path d="M154,98 Q163,112 166,133" stroke="'+af2+'" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>',
+    // forearms
+    '<path d="M26,168 Q25,182 24,200 Q23,215 27,226" stroke="'+C.sk+'" stroke-width="10" fill="none" stroke-linecap="round"/>',
+    '<path d="M164,168 Q165,182 166,200 Q167,215 163,226" stroke="'+C.sk+'" stroke-width="10" fill="none" stroke-linecap="round"/>',
+    // wrists
+    '<ellipse cx="26" cy="228" rx="7" ry="8" fill="'+C.sk2+'"/>',
+    '<ellipse cx="164" cy="228" rx="7" ry="8" fill="'+C.sk2+'"/>',
+    // hands
+    '<path d="M22,228 Q20,240 22,250" stroke="'+C.sk+'" stroke-width="8" fill="none" stroke-linecap="round"/>',
+    '<path d="M168,228 Q170,240 168,250" stroke="'+C.sk+'" stroke-width="8" fill="none" stroke-linecap="round"/>'
+  ].join('');
+}
+
+function legsFront(active) {
+  var lA=active==='legs', cA=active==='calves';
+  var lf=lA?C.red:C.sk, lf2=lA?C.red2:C.mu, cf=cA?C.red:C.sk2;
+  return [
+    // thighs
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M57,218 Q72,212 90,214 L88,280 Q78,285 68,280 Q60,273 57,260 Z" fill="'+lf+'"/>',
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M100,214 Q118,212 133,218 L133,260 Q130,273 122,280 Q112,285 102,280 Z" fill="'+lf+'"/>',
+    // quad definition
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M60,218 Q72,213 88,215 L86,255 Q76,260 66,255 Z" fill="'+lf2+'" opacity=".6"/>',
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M102,215 Q118,213 130,218 L130,255 Q120,260 104,255 Z" fill="'+lf2+'" opacity=".6"/>',
+    // knee caps
+    '<ellipse cx="78" cy="283" rx="9" ry="7" fill="'+C.sk2+'"/>',
+    '<ellipse cx="112" cy="283" rx="9" ry="7" fill="'+C.sk2+'"/>',
+    // shins
+    '<path class="mg" data-id="calves" style="cursor:pointer" d="M69,287 Q78,292 88,287 L86,368 Q76,373 68,368 Z" fill="'+cf+'"/>',
+    '<path class="mg" data-id="calves" style="cursor:pointer" d="M102,287 Q112,292 121,287 L121,368 Q113,373 103,368 Z" fill="'+cf+'"/>',
+    // ankles
+    '<ellipse cx="77" cy="370" rx="9" ry="6" fill="'+C.sk3+'"/>',
+    '<ellipse cx="112" cy="370" rx="9" ry="6" fill="'+C.sk3+'"/>',
+    // shoes
+    '<rect x="64" y="368" width="27" height="13" rx="5" fill="'+C.sho+'"/>',
+    '<rect x="100" y="368" width="27" height="13" rx="5" fill="'+C.sho+'"/>'
+  ].join('');
+}
+
+function legsBack(active) {
+  var lA=active==='legs', cA=active==='calves';
+  var lf=lA?C.red:C.sk, lf2=lA?C.red2:C.mu, cf=cA?C.red:C.sk2;
+  return [
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M57,218 Q72,212 90,214 L88,280 Q78,285 68,280 Q60,273 57,260 Z" fill="'+lf+'"/>',
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M100,214 Q118,212 133,218 L133,260 Q130,273 122,280 Q112,285 102,280 Z" fill="'+lf+'"/>',
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M60,218 Q72,213 88,215 L86,258 Q76,263 66,258 Z" fill="'+lf2+'" opacity=".6"/>',
+    '<path class="mg" data-id="legs" style="cursor:pointer" d="M102,215 Q118,213 130,218 L130,258 Q120,263 104,258 Z" fill="'+lf2+'" opacity=".6"/>',
+    '<ellipse cx="78" cy="283" rx="9" ry="7" fill="'+C.sk2+'"/>',
+    '<ellipse cx="112" cy="283" rx="9" ry="7" fill="'+C.sk2+'"/>',
+    '<path class="mg" data-id="calves" style="cursor:pointer" d="M69,287 Q78,292 88,287 L86,368 Q76,373 68,368 Z" fill="'+cf+'"/>',
+    '<path class="mg" data-id="calves" style="cursor:pointer" d="M102,287 Q112,292 121,287 L121,368 Q113,373 103,368 Z" fill="'+cf+'"/>',
+    '<ellipse cx="77" cy="370" rx="9" ry="6" fill="'+C.sk3+'"/>',
+    '<ellipse cx="112" cy="370" rx="9" ry="6" fill="'+C.sk3+'"/>',
+    '<rect x="64" y="368" width="27" height="13" rx="5" fill="'+C.sho+'"/>',
+    '<rect x="100" y="368" width="27" height="13" rx="5" fill="'+C.sho+'"/>'
+  ].join('');
+}
+
+function buildBodySVG(view, active) {
+  var isFront = view === 'front';
+  var html = bodyBase();
+  if (isFront) {
+    html += torsoFront(active) + armsFront(active) + legsFront(active);
+  } else {
+    html += torsoBack(active) + armsFront(active) + legsBack(active);
+  }
+  return html;
+}
+
+function renderBody(svg, view, active) {
+  svg.innerHTML = buildBodySVG(view, active);
+  var nodes = svg.querySelectorAll('.mg');
+  for (var i = 0; i < nodes.length; i++) {
+    (function(el){ el.addEventListener('click', function(){ selectMuscle(el.dataset.id); }); })(nodes[i]);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HUMAN FIGURE ANIMATION ENGINE
+// ═══════════════════════════════════════════════════════════════
+
+function r2d(a) { return a * Math.PI / 180; }
+
+// Draw a capsule-shaped limb between two points
+function capsule(x1,y1,x2,y2,w,fill,stroke,sw) {
+  sw = sw||0.5;
+  var dx=x2-x1, dy=y2-y1, len=Math.sqrt(dx*dx+dy*dy)||1;
+  var nx=-dy/len*w/2, ny=dx/len*w/2;
+  var mx=(x1+x2)/2, my=(y1+y2)/2;
+  return '<path d="M'+(x1+nx)+','+(y1+ny)+' Q'+(mx+nx*1.1)+','+(my+ny*1.1)+' '+(x2+nx)+','+(y2+ny)+
+         ' L'+(x2-nx)+','+(y2-ny)+' Q'+(mx-nx*1.1)+','+(my-ny*1.1)+' '+(x1-nx)+','+(y1-ny)+
+         ' Z" fill="'+fill+'" stroke="'+stroke+'" stroke-width="'+sw+'"/>';
+}
+
+function jt(x,y,r,fill) { return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+fill+'"/>'; }
+
+// Draw detailed human head facing right
+function figHead(cx, cy, r) {
+  return [
+    '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+r+'" ry="'+(r*1.1)+'" fill="'+C.sk+'"/>',
+    '<ellipse cx="'+cx+'" cy="'+(cy-r*.5)+'" rx="'+(r*.85)+'" ry="'+(r*.52)+'" fill="'+C.hr+'"/>',
+    '<circle cx="'+(cx+r*.28)+'" cy="'+(cy-r*.1)+'" r="'+(r*.13)+'" fill="'+C.eye+'"/>',
+    '<circle cx="'+(cx+r*.33)+'" cy="'+(cy-r*.15)+'" r="'+(r*.045)+'" fill="'+C.wht+'"/>',
+    '<path d="M'+(cx-r*.15)+','+(cy+r*.28)+' Q'+cx+','+(cy+r*.42)+' '+(cx+r*.18)+','+(cy+r*.28)+'" stroke="'+C.lps+'" stroke-width="0.9" fill="none"/>',
+    '<ellipse cx="'+(cx-r*.5)+'" cy="'+cy+'" rx="'+(r*.1)+'" ry="'+(r*.16)+'" fill="'+C.sk2+'" opacity=".45"/>'
+  ].join('');
+}
+
+// Render a full posed figure
+// p = {ox, oy, s, spine, neck, lSA, lEA, rSA, rEA, lHA, lKA, rHA, rKA}
+// highlight = which muscle to color red
+function drawFigure(p, hl) {
+  var ox=p.ox||170, oy=p.oy||190, s=p.s||1;
+  var spA=p.spine||0, nkA=p.neck||0;
+
+  var TL=50*s, HR=14*s, SW=20*s, HW=13*s;
+  var UAL=28*s, FAL=23*s, THL=36*s, SHL=30*s;
+  var LW=9*s, AW=8.5*s, LGW=10*s;
+
+  // spine: from hip to shoulder
+  var spR=r2d(spA);
+  var shX=ox+Math.sin(spR)*TL, shY=oy-Math.cos(spR)*TL;
+
+  // shoulder/hip spread perpendicular to spine
+  var perpX=-Math.cos(spR), perpY=-Math.sin(spR);
+  var lShX=shX-perpX*SW, lShY=shY-perpY*SW;
+  var rShX=shX+perpX*SW, rShY=shY+perpY*SW;
+  var lHiX=ox-perpX*HW, lHiY=oy-perpY*HW;
+  var rHiX=ox+perpX*HW, rHiY=oy+perpY*HW;
+
+  // head
+  var nkR=r2d(nkA+spA);
+  var hcX=shX+Math.sin(nkR)*HR*1.6, hcY=shY-Math.cos(nkR)*HR*1.6;
+
+  // arm chains
+  function armPts(sX,sY,saA,eaA){
+    var uar=r2d(saA+spA);
+    var eX=sX+Math.sin(uar)*UAL, eY=sY-Math.cos(uar)*UAL;
+    var far=r2d(eaA+saA+spA);
+    var hX=eX+Math.sin(far)*FAL, hY=eY-Math.cos(far)*FAL;
+    return {eX:eX,eY:eY,hX:hX,hY:hY};
+  }
+  var lArm=armPts(lShX,lShY,p.lSA||0,p.lEA||0);
+  var rArm=armPts(rShX,rShY,p.rSA||0,p.rEA||0);
+
+  // leg chains
+  function legPts(hX,hY,haA,kaA){
+    var thr=r2d(haA);
+    var kX=hX+Math.sin(thr)*THL, kY=hY+Math.cos(thr)*THL;
+    var shr=r2d(haA+kaA);
+    var fX=kX+Math.sin(shr)*SHL, fY=kY+Math.cos(shr)*SHL;
+    return {kX:kX,kY:kY,fX:fX,fY:fY};
+  }
+  var lLeg=legPts(lHiX,lHiY,p.lHA||0,p.lKA||0);
+  var rLeg=legPts(rHiX,rHiY,p.rHA||0,p.rKA||0);
+
+  // fill colors
+  var chestF=(hl==='chest'||hl==='shoulders'||hl==='arms')?C.red:C.mu;
+  var legF=(hl==='legs'||hl==='glutes'||hl==='calves')?C.red:'#3a5070';
+  var armF=(hl==='arms')?C.red:C.sk2;
+  var absF=(hl==='abs')?C.red:'#5a3535';
+
+  var out = [];
+
+  // back leg
+  out.push(capsule(rHiX,rHiY,rLeg.kX,rLeg.kY,LGW,legF,'#1a2030',0.5));
+  out.push(capsule(rLeg.kX,rLeg.kY,rLeg.fX,rLeg.fY,LGW*.85,'#3a5070','#1a2030',0.5));
+  out.push('<rect x="'+(rLeg.fX-9*s)+'" y="'+(rLeg.fY-3*s)+'" width="'+(18*s)+'" height="'+(6*s)+'" rx="'+(3*s)+'" fill="'+C.sho+'"/>');
+  out.push(jt(rLeg.kX,rLeg.kY,4.5*s,C.sk));
+
+  // back arm
+  out.push(capsule(rShX,rShY,rArm.eX,rArm.eY,AW,armF,C.sk3,0.5));
+  out.push(capsule(rArm.eX,rArm.eY,rArm.hX,rArm.hY,AW*.82,C.sk,C.sk3,0.5));
+  out.push(jt(rArm.eX,rArm.eY,3.5*s,C.sk2));
+
+  // torso
+  var tw=22*s;
+  out.push('<path d="M'+lShX+','+lShY+' Q'+((lShX+rShX)/2)+','+(((lShY+rShY)/2)-tw*.3)+' '+rShX+','+rShY+
+           ' L'+rHiX+','+rHiY+' Q'+((lHiX+rHiX)/2)+','+(((lHiY+rHiY)/2)+tw*.2)+' '+lHiX+','+lHiY+
+           ' Z" fill="'+chestF+'"/>');
+  // shorts
+  out.push('<path d="M'+lHiX+','+lHiY+' Q'+((lHiX+rHiX)/2)+','+(((lHiY+rHiY)/2)+7*s)+' '+rHiX+','+rHiY+
+           ' L'+(rHiX+Math.sin(r2d(p.rHA||0))*14*s)+','+(rHiY+Math.cos(r2d(p.rHA||0))*14*s)+
+           ' Q'+((lHiX+rHiX)/2)+','+(((lHiY+rHiY)/2)+18*s)+
+           ' '+(lHiX+Math.sin(r2d(p.lHA||0))*14*s)+','+(lHiY+Math.cos(r2d(p.lHA||0))*14*s)+
+           ' Z" fill="'+C.clo+'"/>');
+  // abs crease
+  out.push('<line x1="'+((lShX+lHiX)/2+2*s)+'" y1="'+((lShY+lHiY)/2)+'" x2="'+((rShX+rHiX)/2-2*s)+'" y2="'+((rShY+rHiY)/2)+'" stroke="'+absF+'" stroke-width="1.5" opacity=".45"/>');
+
+  // front leg
+  out.push(capsule(lHiX,lHiY,lLeg.kX,lLeg.kY,LGW,'#4a6a8a','#1a2a3a',0.5));
+  out.push(capsule(lLeg.kX,lLeg.kY,lLeg.fX,lLeg.fY,LGW*.85,'#3a5a7a','#1a2a3a',0.5));
+  out.push('<rect x="'+(lLeg.fX-10*s)+'" y="'+(lLeg.fY-3*s)+'" width="'+(20*s)+'" height="'+(6*s)+'" rx="'+(3*s)+'" fill="'+C.sho+'"/>');
+  out.push(jt(lLeg.kX,lLeg.kY,5*s,C.sk));
+  out.push(jt(lHiX,lHiY,5.5*s,C.sk2));
+  out.push(jt(rHiX,rHiY,4.5*s,C.sk3));
+
+  // front arm
+  out.push(capsule(lShX,lShY,lArm.eX,lArm.eY,AW,armF,C.sk3));
+  out.push(capsule(lArm.eX,lArm.eY,lArm.hX,lArm.hY,AW*.82,C.sk,C.sk3));
+  out.push(jt(lArm.eX,lArm.eY,4*s,C.sk2));
+  out.push(jt(lShX,lShY,5*s,C.sk2));
+  out.push(jt(rShX,rShY,4.5*s,C.sk3));
+
+  // neck + head
+  out.push('<line x1="'+shX+'" y1="'+shY+'" x2="'+hcX+'" y2="'+(hcY+HR*.4)+'" stroke="'+C.sk2+'" stroke-width="'+(7*s)+'" stroke-linecap="round"/>');
+  out.push(figHead(hcX, hcY, HR));
+
+  // hands
+  out.push('<circle cx="'+lArm.hX+'" cy="'+lArm.hY+'" r="'+(4*s)+'" fill="'+C.sk+'"/>');
+  out.push('<circle cx="'+rArm.hX+'" cy="'+rArm.hY+'" r="'+(3.5*s)+'" fill="'+C.sk2+'"/>');
+
+  return out.join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXERCISE KEYFRAME ANIMATIONS
+// ═══════════════════════════════════════════════════════════════
+var ANIMS = {
+  pushup: {
+    hl:'chest', vb:'0 0 340 170', label:'Chest · Triceps · Front Delt',
+    ground: function(){ return '<rect x="15" y="150" width="310" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:170,oy:130,s:.88,spine:0,neck:-10,lSA:82,lEA:0, rSA:82,rEA:0, lHA:-2,lKA:0,rHA:-2,rKA:0},
+      {ox:170,oy:130,s:.88,spine:0,neck:-5, lSA:82,lEA:38,rSA:82,rEA:38,lHA:-2,lKA:0,rHA:-2,rKA:0},
+      {ox:170,oy:130,s:.88,spine:0,neck:0,  lSA:82,lEA:72,rSA:82,rEA:72,lHA:-2,lKA:0,rHA:-2,rKA:0},
+      {ox:170,oy:130,s:.88,spine:0,neck:-5, lSA:82,lEA:38,rSA:82,rEA:38,lHA:-2,lKA:0,rHA:-2,rKA:0}
+    ]
+  },
+  squat: {
+    hl:'legs', vb:'0 0 340 240', label:'Quads · Glutes · Hamstrings',
+    ground: function(){ return '<rect x="50" y="228" width="240" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:170,oy:195,s:1,  spine:0,  neck:0, lSA:28,lEA:-18,rSA:-28,rEA:18,lHA:0, lKA:0,  rHA:0, rKA:0},
+      {ox:170,oy:208,s:1,  spine:-8, neck:8, lSA:24,lEA:-14,rSA:-24,rEA:14,lHA:22,lKA:-28,rHA:22,rKA:-28},
+      {ox:170,oy:222,s:1,  spine:-15,neck:15,lSA:20,lEA:-10,rSA:-20,rEA:10,lHA:46,lKA:-52,rHA:46,rKA:-52},
+      {ox:170,oy:208,s:1,  spine:-8, neck:8, lSA:24,lEA:-14,rSA:-24,rEA:14,lHA:22,lKA:-28,rHA:22,rKA:-28}
+    ]
+  },
+  bridge: {
+    hl:'glutes', vb:'0 0 340 190', label:'Glutes · Hamstrings · Core',
+    ground: function(){ return '<rect x="10" y="176" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:100,oy:152,s:.9,spine:90,neck:-88,lSA:-100,lEA:0,rSA:-100,rEA:0,lHA:-90,lKA:50,rHA:-90,rKA:50},
+      {ox:105,oy:152,s:.9,spine:75,neck:-73,lSA:-100,lEA:0,rSA:-100,rEA:0,lHA:-70,lKA:40,rHA:-70,rKA:40},
+      {ox:112,oy:152,s:.9,spine:55,neck:-53,lSA:-100,lEA:0,rSA:-100,rEA:0,lHA:-48,lKA:26,rHA:-48,rKA:26},
+      {ox:112,oy:152,s:.9,spine:52,neck:-50,lSA:-100,lEA:0,rSA:-100,rEA:0,lHA:-46,lKA:24,rHA:-46,rKA:24}
+    ]
+  },
+  plank: {
+    hl:'abs', vb:'0 0 340 165', label:'Full Core · Abs · Shoulders',
+    ground: function(){ return '<rect x="10" y="152" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:170,oy:132,s:.88,spine:0,neck:-10,lSA:86,lEA:62,rSA:86,rEA:62,lHA:-3,lKA:0,rHA:-3,rKA:0},
+      {ox:170,oy:132,s:.88,spine:0,neck:-6, lSA:86,lEA:64,rSA:86,rEA:64,lHA:-3,lKA:0,rHA:-3,rKA:0},
+      {ox:170,oy:132,s:.88,spine:-2,neck:-8,lSA:86,lEA:66,rSA:86,rEA:66,lHA:-3,lKA:0,rHA:-3,rKA:0},
+      {ox:170,oy:132,s:.88,spine:0,neck:-10,lSA:86,lEA:62,rSA:86,rEA:62,lHA:-3,lKA:0,rHA:-3,rKA:0}
+    ]
+  },
+  pike: {
+    hl:'shoulders', vb:'0 0 340 210', label:'Shoulders · Triceps · Core',
+    ground: function(){ return '<rect x="10" y="198" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:175,oy:175,s:.9,spine:-44,neck:42,lSA:116,lEA:6, rSA:116,rEA:6, lHA:-132,lKA:0,rHA:-132,rKA:0},
+      {ox:172,oy:175,s:.9,spine:-47,neck:45,lSA:116,lEA:36,rSA:116,rEA:36,lHA:-132,lKA:0,rHA:-132,rKA:0},
+      {ox:168,oy:175,s:.9,spine:-50,neck:48,lSA:116,lEA:65,rSA:116,rEA:65,lHA:-132,lKA:0,rHA:-132,rKA:0},
+      {ox:172,oy:175,s:.9,spine:-47,neck:45,lSA:116,lEA:36,rSA:116,rEA:36,lHA:-132,lKA:0,rHA:-132,rKA:0}
+    ]
+  },
+  tricdip: {
+    hl:'arms', vb:'0 0 340 210', label:'Triceps · Chest · Shoulders',
+    ground: function(){
+      return '<rect x="5" y="65" width="40" height="145" rx="5" fill="#1e2028"/>'+
+             '<rect x="295" y="65" width="40" height="145" rx="5" fill="#1e2028"/>'+
+             '<rect x="5" y="60" width="40" height="12" rx="3" fill="#252830"/>'+
+             '<rect x="295" y="60" width="40" height="12" rx="3" fill="#252830"/>';
+    },
+    frames:[
+      {ox:170,oy:110,s:.92,spine:0,neck:0, lSA:94,lEA:-5, rSA:94,rEA:-5, lHA:32,lKA:-32,rHA:32,rKA:-32},
+      {ox:170,oy:124,s:.92,spine:0,neck:0, lSA:94,lEA:34, rSA:94,rEA:34, lHA:32,lKA:-32,rHA:32,rKA:-32},
+      {ox:170,oy:140,s:.92,spine:0,neck:5, lSA:94,lEA:70, rSA:94,rEA:70, lHA:32,lKA:-32,rHA:32,rKA:-32},
+      {ox:170,oy:124,s:.92,spine:0,neck:0, lSA:94,lEA:34, rSA:94,rEA:34, lHA:32,lKA:-32,rHA:32,rKA:-32}
+    ]
+  },
+  superman: {
+    hl:'back', vb:'0 0 340 165', label:'Lower Back · Glutes · Rear Delt',
+    ground: function(){ return '<rect x="10" y="150" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:162,oy:130,s:.88,spine:0, neck:-10,lSA:-82,lEA:0,rSA:-82,rEA:0,lHA:-3,lKA:0,rHA:-3,rKA:0},
+      {ox:162,oy:126,s:.88,spine:-5,neck:-15,lSA:-106,lEA:0,rSA:-106,rEA:0,lHA:-16,lKA:0,rHA:-16,rKA:0},
+      {ox:162,oy:120,s:.88,spine:-10,neck:-20,lSA:-122,lEA:0,rSA:-122,rEA:0,lHA:-28,lKA:0,rHA:-28,rKA:0},
+      {ox:162,oy:126,s:.88,spine:-5,neck:-15,lSA:-106,lEA:0,rSA:-106,rEA:0,lHA:-16,lKA:0,rHA:-16,rKA:0}
+    ]
+  },
+  calfraise: {
+    hl:'calves', vb:'0 0 340 240', label:'Gastrocnemius · Soleus',
+    ground: function(){ return '<rect x="50" y="228" width="240" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:170,oy:192,s:1,spine:0,neck:0,lSA:14,lEA:-5,rSA:-14,rEA:5,lHA:0,lKA:0,rHA:0,rKA:0},
+      {ox:170,oy:183,s:1,spine:0,neck:0,lSA:14,lEA:-5,rSA:-14,rEA:5,lHA:-5,lKA:2,rHA:-5,rKA:2},
+      {ox:170,oy:174,s:1,spine:0,neck:-3,lSA:14,lEA:-5,rSA:-14,rEA:5,lHA:-10,lKA:5,rHA:-10,rKA:5},
+      {ox:170,oy:183,s:1,spine:0,neck:0,lSA:14,lEA:-5,rSA:-14,rEA:5,lHA:-5,lKA:2,rHA:-5,rKA:2}
+    ]
+  },
+  bicycle: {
+    hl:'abs', vb:'0 0 340 190', label:'Obliques · Upper Abs',
+    ground: function(){ return '<rect x="10" y="178" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:105,oy:152,s:.88,spine:80,neck:-68,lSA:-138,lEA:-18,rSA:-62,rEA:28,lHA:-75,lKA:42,rHA:-120,rKA:68},
+      {ox:105,oy:152,s:.88,spine:78,neck:-64,lSA:-128,lEA:-12,rSA:-72,rEA:22,lHA:-80,lKA:46,rHA:-112,rKA:56},
+      {ox:105,oy:152,s:.88,spine:82,neck:-72,lSA:-62,rSA:-138,lEA:28,rEA:-18,lHA:-120,rHA:-75,lKA:68,rKA:42},
+      {ox:105,oy:152,s:.88,spine:80,neck:-68,lSA:-72,rSA:-128,lEA:22,rEA:-12,lHA:-112,rHA:-80,lKA:56,rKA:46}
+    ]
+  },
+  legraise: {
+    hl:'abs', vb:'0 0 340 178', label:'Lower Abs · Hip Flexors',
+    ground: function(){ return '<rect x="10" y="165" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:116,oy:138,s:.88,spine:90,neck:-90,lSA:-90,lEA:0,rSA:-90,rEA:0,lHA:-88,lKA:2,rHA:-88,rKA:2},
+      {ox:116,oy:138,s:.88,spine:90,neck:-90,lSA:-90,lEA:0,rSA:-90,rEA:0,lHA:-68,lKA:2,rHA:-68,rKA:2},
+      {ox:116,oy:138,s:.88,spine:90,neck:-90,lSA:-90,lEA:0,rSA:-90,rEA:0,lHA:-42,lKA:2,rHA:-42,rKA:2},
+      {ox:116,oy:138,s:.88,spine:90,neck:-90,lSA:-90,lEA:0,rSA:-90,rEA:0,lHA:-65,lKA:2,rHA:-65,rKA:2}
+    ]
+  },
+  donkeykick: {
+    hl:'glutes', vb:'0 0 340 190', label:'Glute Max · Glute Med',
+    ground: function(){ return '<rect x="10" y="178" width="320" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:148,oy:150,s:.9,spine:0,neck:-10,lSA:82,lEA:80,rSA:82,rEA:80,lHA:2,lKA:-82,rHA:2,rKA:-82},
+      {ox:148,oy:150,s:.9,spine:0,neck:-5, lSA:82,lEA:80,rSA:82,rEA:80,lHA:2,lKA:-82,rHA:-28,rKA:-62},
+      {ox:148,oy:150,s:.9,spine:2,neck:0,  lSA:82,lEA:80,rSA:82,rEA:80,lHA:2,lKA:-82,rHA:-55,rKA:-36},
+      {ox:148,oy:150,s:.9,spine:0,neck:-5, lSA:82,lEA:80,rSA:82,rEA:80,lHA:2,lKA:-82,rHA:-28,rKA:-58}
+    ]
+  },
+  splitsquat: {
+    hl:'legs', vb:'0 0 340 240', label:'Quads · Glutes · Balance',
+    ground: function(){ return '<rect x="20" y="228" width="300" height="4" rx="2" fill="'+C.gnd+'"/>'; },
+    frames:[
+      {ox:162,oy:152,s:1,spine:-5, neck:5, lSA:20,lEA:-10,rSA:-20,rEA:10,lHA:16,lKA:-22,rHA:-32,rKA:-8},
+      {ox:162,oy:165,s:1,spine:-9, neck:9, lSA:22,lEA:-12,rSA:-22,rEA:12,lHA:30,lKA:-40,rHA:-36,rKA:-6},
+      {ox:162,oy:178,s:1,spine:-13,neck:13,lSA:25,lEA:-14,rSA:-25,rEA:14,lHA:48,lKA:-60,rHA:-40,rKA:-4},
+      {ox:162,oy:165,s:1,spine:-9, neck:9, lSA:22,lEA:-12,rSA:-22,rEA:12,lHA:30,lKA:-40,rHA:-36,rKA:-6}
+    ]
+  }
+};
+
+function renderFrame(animKey, frameIdx, hl) {
+  var anim = ANIMS[animKey];
+  if (!anim) return '';
+  var pose = anim.frames[frameIdx];
+  var ground = anim.ground ? anim.ground() : '';
+  var fig = drawFigure(pose, hl || anim.hl);
+  return '<svg viewBox="'+anim.vb+'" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">'+ground+fig+'</svg>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MUSCLES DATA
+// ═══════════════════════════════════════════════════════════════
+var MUSCLES = {
+  chest:{name:'Chest',tag:'Push / Anterior',color:'#e83838',exercises:[
+    {name:'Push-up',sets:'3×15',chips:['Chest','Triceps','Front Delt'],steps:['Hands shoulder-width, fingers forward','Lower chest 1 inch from floor','Drive up, squeeze chest at top','Keep core tight throughout'],tip:'Slow the lowering to 3 seconds for maximum muscle tension.',pose:'pushup'},
+    {name:'Wide Push-up',sets:'3×12',chips:['Outer Chest','Shoulders'],steps:['Hands 1.5× shoulder width','Elbows flare 45° outward','Touch chest briefly to floor','Exhale and press back up'],tip:'Wider grip targets the outer pec for chest width.',pose:'pushup'},
+    {name:'Diamond Push-up',sets:'3×10',chips:['Inner Chest','Triceps'],steps:['Thumbs and index fingers form a diamond','Hands under sternum','Lower nose toward your hands','Lock out fully at top'],tip:'Hardest push-up. Drop to knees to modify.',pose:'pushup'},
+    {name:'Decline Push-up',sets:'3×12',chips:['Upper Chest','Front Delt'],steps:['Feet elevated on chair','Hands on floor below shoulders','Body straight, head to toe','Lower chest and push back up'],tip:'The higher the feet, the more upper-chest activation.',pose:'pushup'}
+  ]},
+  shoulders:{name:'Shoulders',tag:'Push / Deltoids',color:'#ff5722',exercises:[
+    {name:'Pike Push-up',sets:'3×10',chips:['Front Delt','Triceps'],steps:['Hips high in an inverted-V','Hands shoulder-width','Lower head between hands','Press back to pike position'],tip:'The steeper the pike, the more shoulder load.',pose:'pike'},
+    {name:'Lateral Raise',sets:'3×15',chips:['Side Delt'],steps:['Stand tall, arms at sides','Raise arms to shoulder height','Pause 1 second at top','Lower over 3 seconds'],tip:'Use water bottles. Never swing.',pose:'pike'},
+    {name:'Wall Handstand',sets:'3×20s',chips:['All 3 Delt Heads','Core'],steps:['Stand 1 foot from wall, facing away','Kick feet up gently','Arms locked, body vertical','Hold and breathe steadily'],tip:'Practice wall walks first to build confidence.',pose:'pike'}
+  ]},
+  arms:{name:'Arms',tag:'Biceps & Triceps',color:'#4a9eff',exercises:[
+    {name:'Tricep Dip',sets:'3×12',chips:['Triceps','Chest'],steps:['Hands on sturdy chair behind you','Feet flat, knees bent','Lower until upper arm is parallel','Press back to full lock-out'],tip:'Keep elbows pointing directly back — not flaring.',pose:'tricdip'},
+    {name:'Doorframe Curl',sets:'3×10',chips:['Biceps','Brachialis'],steps:['Grip both sides of doorframe','Lean back slightly','Curl bodyweight toward frame','Control the lowering'],tip:'More lean = harder.',pose:'tricdip'},
+    {name:'Diamond Push-up',sets:'3×10',chips:['Triceps','Inner Chest'],steps:['Diamond hand position','Keep elbows close','Full range from chest to lock-out','Feel the tricep squeeze at top'],tip:'2/3 of arm size is triceps. Prioritize these.',pose:'pushup'}
+  ]},
+  abs:{name:'Core & Abs',tag:'Core Stability',color:'#e83838',exercises:[
+    {name:'Plank',sets:'3×45s',chips:['Full Core','Glutes','Shoulders'],steps:['Forearms flat, elbows under shoulders','Body perfectly straight','Squeeze glutes and abs together','Breathe steadily — no sagging'],tip:'30 seconds perfect form beats 2 minutes sloppy.',pose:'plank'},
+    {name:'Bicycle Crunch',sets:'3×20',chips:['Obliques','Upper Abs'],steps:['Lie back, hands behind head lightly','Lift shoulders off floor','Elbow to opposite knee','Alternate slowly'],tip:'Slow is more. Speed kills the tension.',pose:'bicycle'},
+    {name:'Leg Raise',sets:'3×15',chips:['Lower Abs','Hip Flexors'],steps:['Lie flat, legs straight','Press lower back into floor','Raise legs to 90°','Lower without touching floor'],tip:'Press lower back down the entire time.',pose:'legraise'}
+  ]},
+  back:{name:'Back',tag:'Pull / Posterior',color:'#4a9eff',exercises:[
+    {name:'Superman Hold',sets:'3×15',chips:['Lower Back','Glutes','Rear Delt'],steps:['Lie face down, arms extended','Lift arms and legs simultaneously','Hold peak 2 seconds','Lower with control'],tip:'Pull shoulder blades together at the top.',pose:'superman'},
+    {name:'Table Row',sets:'3×12',chips:['Lats','Rhomboids','Biceps'],steps:['Lie under table, grip the edge','Body straight heel to shoulder','Pull chest up to the table','Lower in 3 seconds'],tip:'Best bodyweight back exercise.',pose:'superman'},
+    {name:'Reverse Snow Angel',sets:'3×15',chips:['Upper Back','Rear Delt'],steps:['Lie face down, arms at sides','Lift arms off the floor','Sweep to overhead and back','Shoulders stay elevated throughout'],tip:'Squeezes the muscles between your shoulder blades.',pose:'superman'}
+  ]},
+  legs:{name:'Legs',tag:'Lower Body / Quads',color:'#e83838',exercises:[
+    {name:'Bodyweight Squat',sets:'3×20',chips:['Quads','Glutes','Hamstrings'],steps:['Feet shoulder-width, toes 15° out','Sit hips back and down','Thighs parallel or below floor','Drive through heels to stand'],tip:'Chest tall, knees tracking over toes.',pose:'squat'},
+    {name:'Bulgarian Split Squat',sets:'3×12',chips:['Quads','Glutes','Balance'],steps:['Rear foot on chair','Front foot forward','Sink rear knee toward floor','Drive up through front heel'],tip:'Best single-leg quad and glute builder.',pose:'splitsquat'},
+    {name:'Jump Squat',sets:'3×15',chips:['Power','Explosiveness'],steps:['Squat to parallel','Explode upward off heels','Land softly on balls of feet','Absorb and descend immediately'],tip:'Land with soft bent knees.',pose:'squat'}
+  ]},
+  glutes:{name:'Glutes',tag:'Lower Body / Posterior',color:'#4a9eff',exercises:[
+    {name:'Glute Bridge',sets:'4×20',chips:['Glutes','Hamstrings','Core'],steps:['Lie on back, knees bent, feet flat','Drive hips up explosively','Hard squeeze at top for 1s','Lower slowly'],tip:'Drive from heels. Feel glutes, not back.',pose:'bridge'},
+    {name:'Donkey Kick',sets:'3×15',chips:['Glute Max','Glute Med'],steps:['All fours, neutral spine','Kick heel toward ceiling','Squeeze glute at top','Control the descent'],tip:'Hips square to floor — no rotation.',pose:'donkeykick'},
+    {name:'Single-Leg Bridge',sets:'3×15',chips:['Glutes','Hamstrings'],steps:['One leg extended straight up','Drive hips up with one foot','Hold 1 second','Switch sides'],tip:'Fixes left-right imbalances.',pose:'bridge'}
+  ]},
+  calves:{name:'Calves',tag:'Lower Leg',color:'#2ecc71',exercises:[
+    {name:'Calf Raise',sets:'4×25',chips:['Gastrocnemius','Soleus'],steps:['Stand on edge of a step','Rise fully onto toes','Pause 1 second at top','Lower completely — full stretch'],tip:'Full range is everything. Partial reps build nothing.',pose:'calfraise'},
+    {name:'Single-Leg Raise',sets:'3×15',chips:['Gastrocnemius','Power'],steps:['Balance on one foot','Rise completely onto toes','Control descent','Switch legs'],tip:'Full bodyweight on one calf = serious overload.',pose:'calfraise'}
+  ]}
+};
+
+// ═══════════════════════════════════════════════════════════════
+// LEGEND DATA
+// ═══════════════════════════════════════════════════════════════
+var LEG_F=[{id:'chest',l:'Chest',c:'#e83838'},{id:'shoulders',l:'Shoulders',c:'#ff5722'},{id:'arms',l:'Arms',c:'#4a9eff'},{id:'abs',l:'Core / Abs',c:'#e83838'},{id:'legs',l:'Quads',c:'#e83838'},{id:'calves',l:'Calves',c:'#2ecc71'}];
+var LEG_B=[{id:'back',l:'Back',c:'#4a9eff'},{id:'shoulders',l:'Shoulders',c:'#ff5722'},{id:'arms',l:'Arms',c:'#4a9eff'},{id:'glutes',l:'Glutes',c:'#4a9eff'},{id:'legs',l:'Hamstrings',c:'#e83838'},{id:'calves',l:'Calves',c:'#2ecc71'}];
+
+function renderLegend() {
+  var items = currentView==='front' ? LEG_F : LEG_B;
+  var html = '';
+  for (var i=0;i<items.length;i++) {
+    var it=items[i];
+    html+='<div class="leg-item" onclick="selectMuscle(\''+it.id+'\')">' +
+          '<div class="leg-dot" style="background:'+it.c+'"></div>'+it.l+'</div>';
+  }
+  document.getElementById('legend').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ANIMATION STATE
+// ═══════════════════════════════════════════════════════════════
+var animTimer=null, animFrame=0, animPlaying=false;
+var curPoseKey='pushup', curHL='chest', repCount=0;
+
+function stopAnim() {
+  animPlaying=false;
+  if(animTimer){ clearInterval(animTimer); animTimer=null; }
+  var btn=document.getElementById('animBtn');
+  if(btn){ btn.textContent='▶ Play'; btn.classList.remove('on'); }
+}
+
+function startAnim(poseKey, hl) {
+  stopAnim();
+  curPoseKey=poseKey; curHL=hl; animFrame=0; repCount=0;
+  animPlaying=true;
+  updateFrame();
+  var btn=document.getElementById('animBtn');
+  if(btn){ btn.textContent='⏸ Pause'; btn.classList.add('on'); }
+  animTimer=setInterval(function(){
+    animFrame=(animFrame+1)%(ANIMS[curPoseKey].frames.length);
+    if(animFrame===0) repCount++;
+    updateFrame();
+  }, 660);
+}
+
+function toggleAnim() {
+  if(animPlaying) stopAnim();
+  else {
+    animPlaying=true;
+    var btn=document.getElementById('animBtn');
+    if(btn){ btn.textContent='⏸ Pause'; btn.classList.add('on'); }
+    animTimer=setInterval(function(){
+      animFrame=(animFrame+1)%(ANIMS[curPoseKey].frames.length);
+      if(animFrame===0) repCount++;
+      updateFrame();
+    }, 660);
+  }
+}
+
+function updateFrame() {
+  var canvas=document.getElementById('animCanvas');
+  var repEl=document.getElementById('repCounter');
+  if(canvas) canvas.innerHTML=renderFrame(curPoseKey, animFrame, curHL);
+  if(repEl) repEl.textContent=String(repCount).padStart(2,'0')+' reps';
+  var bars=document.querySelectorAll('.fbar');
+  for(var i=0;i<bars.length;i++) bars[i].classList.toggle('on',i===animFrame);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL LOGIC
+// ═══════════════════════════════════════════════════════════════
+var currentView='front', activeId=null, curExIdx=0;
+
+function setView(v,btn) {
+  currentView=v;
+  var btns=document.querySelectorAll('.vbtn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+  btn.classList.add('on');
+  renderBody(document.getElementById('bodySvg'), v, activeId);
+  renderLegend();
+}
+
+function selectMuscle(id) {
+  activeId=id;
+  renderBody(document.getElementById('bodySvg'), currentView, id);
+  showPanel(id);
+  document.getElementById('trainer').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showPanel(id) {
+  var m=MUSCLES[id];
+  if(!m) return;
+  stopAnim();
+  document.getElementById('emptyState').style.display='none';
+  var wc=document.getElementById('workoutContent');
+  wc.style.display='block';
+  wc.className='fade-up';
+  var tabs='';
+  for(var i=0;i<m.exercises.length;i++) {
+    tabs+='<button class="etab'+(i===0?' on':'')+'" onclick="switchEx('+i+',\''+id+'\')">'+m.exercises[i].name+'</button>';
+  }
+  wc.innerHTML='<div class="panel-hdr"><div class="mname">'+m.name+'</div><span class="mtag">'+m.tag+'</span></div>'+
+    '<div class="panel-body"><div class="ex-tabs" id="exTabs">'+tabs+'</div><div id="exContent" class="ex-grid"></div></div>';
+  curExIdx=0;
+  renderEx(id, 0);
+}
+
+function switchEx(i, id) {
+  curExIdx=i;
+  var tabs=document.querySelectorAll('.etab');
+  for(var j=0;j<tabs.length;j++) tabs[j].classList.toggle('on',j===i);
+  stopAnim();
+  renderEx(id, i);
+}
+
+function renderEx(id, i) {
+  var e=MUSCLES[id].exercises[i];
+  var anim=ANIMS[e.pose];
+  var nf=anim?anim.frames.length:3;
+  curPoseKey=e.pose; curHL=anim?anim.hl:''; animFrame=0; repCount=0;
+
+  var bars='';
+  for(var b=0;b<nf;b++) bars+='<div class="fbar'+(b===0?' on':'')+'"></div>';
+
+  var chips='';
+  for(var c=0;c<e.chips.length;c++) chips+='<span class="chip">'+e.chips[c]+'</span>';
+
+  var stepRows='';
+  for(var s=0;s<e.steps.length;s++) stepRows+='<div class="step"><div class="stepn">'+(s+1)+'</div><span>'+e.steps[s]+'</span></div>';
+
+  var firstFrame = anim ? renderFrame(e.pose, 0, anim.hl) : '';
+  var stageH = anim ? parseInt(anim.vb.split(' ')[3]) : 200;
+  stageH = Math.min(stageH, 220);
+
+  document.getElementById('exContent').innerHTML=
+    '<div class="stage">'+
+      '<div class="stage-top"><div class="stage-name">'+e.name.toUpperCase()+'</div><div class="stage-rep" id="repCounter">00 reps</div></div>'+
+      '<div class="stage-canvas" id="animCanvas" style="height:'+stageH+'px">'+firstFrame+'</div>'+
+      '<div class="stage-muscle">'+(anim?anim.label:'Muscles activated')+'</div>'+
+      '<div class="stage-ctrl">'+
+        '<button class="cbtn" id="animBtn" onclick="toggleAnim()">▶ Play</button>'+
+        '<div class="fbars">'+bars+'</div>'+
+        '<span style="font-size:10px;color:var(--dim)">0.66s/frame</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="info-panel">'+
+      '<div><div class="ilbl">Sets & Reps</div><div class="ival">'+e.sets+'</div></div>'+
+      '<div><div class="ilbl">Muscles Worked</div><div class="chips">'+chips+'</div></div>'+
+      '<div><div class="ilbl">How To Do It</div><div class="steps">'+stepRows+'</div></div>'+
+      '<div class="tip-box"><div class="tip-txt"><strong>Pro tip:</strong> '+e.tip+'</div></div>'+
+      '<button class="plan-btn" onclick="window.location=\'#plan\'">View weekly training plan ↓</button>'+
+    '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HERO ANIMATION
+// ═══════════════════════════════════════════════════════════════
+var heroF=0;
+function heroTick(){
+  heroF=(heroF+1)%4;
+  var svg=document.getElementById('heroSvg');
+  if(!svg) return;
+  var anim=ANIMS.pushup;
+  var pose=anim.frames[heroF];
+  var adj={ox:pose.ox,oy:pose.oy+35,s:(pose.s||1)*1.08,spine:pose.spine,neck:pose.neck,lSA:pose.lSA,lEA:pose.lEA,rSA:pose.rSA,rEA:pose.rEA,lHA:pose.lHA,lKA:pose.lKA,rHA:pose.rHA,rKA:pose.rKA};
+  svg.innerHTML='<rect x="10" y="235" width="320" height="5" rx="2" fill="'+C.gnd+'"/>'+drawFigure(adj,'chest');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+renderBody(document.getElementById('bodySvg'), 'front', null);
+renderLegend();
+setInterval(heroTick, 660);
+heroTick();
+</script>
+</body>
+</html>
